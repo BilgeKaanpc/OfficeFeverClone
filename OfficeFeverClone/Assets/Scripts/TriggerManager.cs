@@ -11,12 +11,30 @@ public class TriggerManager : MonoBehaviour
     public delegate void OnDeskArea();
     public static event OnDeskArea OnPaperGive;
     public static WorkerManager workerManager;
+
+    public delegate void OnMoneyArea();
+    public static event OnMoneyArea OnMoneyCollected;
+
+    public delegate void OnBuyArea();
+    public static event OnBuyArea OnBuyingDesk;
+
     bool isCollecting,isGiving;
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(CollectEnum());
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Money")
+        {
+            OnMoneyCollected();
+            Destroy(other.gameObject);
+        }
+    }
+
+
     private void OnTriggerStay(Collider other)
     {
         if(other.gameObject.tag == "CollectArea")
@@ -28,6 +46,10 @@ public class TriggerManager : MonoBehaviour
         {
             isGiving = true;
             workerManager = other.gameObject.GetComponent<WorkerManager>();
+        }
+        if(other.gameObject.tag == "buyArea")
+        {
+            OnBuyingDesk();
         }
     }
     private void OnTriggerExit(Collider other)
